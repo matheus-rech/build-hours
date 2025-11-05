@@ -1,0 +1,29 @@
+# OS/IDE artifacts
+.DS_Store
+**/__pycache__/
+*.py[cod]
+*.log
+.ipynb_checkpoints/
+
+# Python environments
+.venv/
+venv/
+env/
+.eggs/
+*.egg-info/
+.python-version
+
+# Build artifacts
+dist/
+build/
+
+# Deprecated (keep out of repo)
+/_deprecated/
+
+# Data and results
+*.jsonl
+
+# Ignore data
+build_hour/finqa_model_text/data/**
+build_hour/finqa_model_text/tool_evals/**
+
