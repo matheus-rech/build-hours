@@ -1,0 +1,40 @@
+{
+  "agentA": {
+    "model": "gpt-5.1",
+    "reasoningLevel": "low",
+    "verbosityLevel": "medium",
+    "memoryTrimming": false,
+    "memoryMaxTurns": 9,
+    "memoryKeepRecentTurns": 4,
+    "memorySummarization": false,
+    "memoryInjection": false,
+    "summarizationKeepRecentTurns": 3,
+    "summarizationTriggerTurns": 5,
+    "memoryCompacting": false,
+    "compactingTriggerTurns": null,
+    "compactingKeepTurns": 2,
+    "compactingExcludeTools": [],
+    "compactingClearToolInputs": false,
+    "eagerness": false,
+    "toolPreambles": false
+  },
+  "agentB": {
+    "model": "gpt-5.1",
+    "reasoningLevel": "low",
+    "verbosityLevel": "medium",
+    "memoryTrimming": false,
+    "memoryMaxTurns": 9,
+    "memoryKeepRecentTurns": 4,
+    "memorySummarization": false,
+    "memoryInjection": true,
+    "summarizationKeepRecentTurns": 3,
+    "summarizationTriggerTurns": 5,
+    "memoryCompacting": false,
+    "compactingTriggerTurns": null,
+    "compactingKeepTurns": 2,
+    "compactingExcludeTools": [],
+    "compactingClearToolInputs": false,
+    "eagerness": false,
+    "toolPreambles": false
+  }
+}

@@ -1,0 +1,360 @@
+
+# **Laptop Refund & Return Policy**
+
+**Effective Date:** January 1, 2025
+**Last Updated:** January 1, 2025
+**Applies To:** All laptop computers and laptop accessories purchased directly from **[Company Name]**, including online, in-store, enterprise, educational, and promotional sales.
+
+This Refund & Return Policy (“Policy”) governs the eligibility, process, and conditions under which customers may request a refund, replacement, store credit, or repair for laptop products purchased from [Company Name]. By completing a purchase, the customer acknowledges and agrees to all terms outlined herein.
+
+---
+
+## **1. Definitions**
+
+For the purpose of this Policy:
+
+* **“Laptop”** refers to any portable personal computing device sold by [Company Name], including notebooks, ultrabooks, gaming laptops, workstations, and 2-in-1 convertible devices.
+* **“Customer”** refers to the original purchaser whose name appears on the invoice.
+* **“Original Condition”** means the laptop is returned with no physical damage, no software tampering, no missing components, and in the same cosmetic and functional state as delivered.
+* **“Refund”** refers to the reimbursement of funds to the original payment method.
+* **“Return”** refers to the physical shipment or in-store surrender of the laptop back to [Company Name].
+* **“RMA”** means Return Merchandise Authorization, a mandatory tracking number issued prior to any return.
+
+---
+
+## **2. Standard Return Window**
+
+### 2.1 Consumer Purchases
+
+Customers may request a return for a refund within **30 calendar days** from the original delivery date.
+
+### 2.2 Business & Enterprise Purchases
+
+Enterprise, bulk, contract, and B2B purchases are eligible for return within **14 calendar days**, unless otherwise stated in a custom enterprise agreement.
+
+### 2.3 Educational & Promotional Sales
+
+All educational discounts, clearance items, special promotions, flash sales, and refurbished units are limited to a **7-day return window** unless explicitly stated otherwise at the time of sale.
+
+---
+
+## **3. Eligibility Requirements for Refund**
+
+To qualify for a refund, **all** of the following conditions must be met:
+
+1. The laptop must be returned **within the applicable return window**.
+2. The laptop must be in **original physical condition**, free of:
+
+   * Cracks, dents, scratches, liquid damage, burn marks, or impact damage
+   * Evidence of overclocking, BIOS tampering, or hardware modification
+3. All original components must be included, including:
+
+   * Power adapter
+   * Battery (if removable)
+   * Manuals
+   * Warranty cards
+   * Stickers
+   * Protective films (if applicable)
+4. Original packaging must be included and in resalable condition.
+5. Any **preinstalled security seals** must be intact.
+6. The device must not be:
+
+   * Reported stolen
+   * Subject to fraud investigation
+   * Locked by third-party security software without customer removing it
+
+Failure to meet **any** of the above criteria may result in:
+
+* A partial refund
+* A restocking fee
+* Store credit only
+* Or outright denial of refund
+
+---
+
+## **4. Non-Returnable and Non-Refundable Items**
+
+The following items are strictly **non-refundable**:
+
+* Customized or build-to-order laptops (CPU, RAM, GPU, or storage customized)
+* Software licenses, digital subscriptions, and operating system upgrades
+* Items damaged by:
+
+  * Liquid exposure
+  * Electrical surges
+  * Fire
+  * Unauthorized repair
+* Items returned without an RMA
+* Items returned with missing serial numbers or altered serial labels
+* Clearance items marked **Final Sale**
+* Laptops used for:
+
+  * Mining
+  * Penetration testing
+  * High-risk industrial environments
+  * Military or classified applications
+
+---
+
+## **5. Refund Methods and Processing Time**
+
+### 5.1 Original Payment Method
+
+Approved refunds are issued to the **original form of payment** only.
+
+### 5.2 Processing Timelines
+
+Once the return is received and inspected:
+
+* Inspection: **3–7 business days**
+* Refund processing: **5–10 business days**
+* Bank posting time: **Up to 15 business days**
+
+Total expected refund timeline: **Up to 30 business days**
+
+[Company Name] is not responsible for delays caused by:
+
+* Financial institutions
+* Payment processors
+* International banking systems
+* Government holidays
+
+---
+
+## **6. Restocking Fees**
+
+The following restocking fees may apply:
+
+| Condition                   | Restocking Fee |
+| --------------------------- | -------------- |
+| Opened box, no damage       | 10%            |
+| Minor cosmetic wear         | 15%            |
+| Missing packaging           | 20%            |
+| Minor configuration changes | 25%            |
+
+Restocking fees are deducted from the final refund amount.
+
+---
+
+## **7. Shipping & Handling Costs**
+
+* Original shipping fees are **non-refundable**
+* Return shipping is the **customer’s responsibility** unless:
+
+  * The product is defective
+  * The return resulted from a shipping error
+* If a prepaid return label is issued:
+
+  * Improper packaging voids carrier insurance
+  * Damaged shipments void refund eligibility
+
+---
+
+## **8. Defective Products (DOA & Functional Failures)**
+
+### 8.1 Dead on Arrival (DOA)
+
+A laptop is considered DOA if it fails to power on within **48 hours of first delivery**.
+
+DOA claims require:
+
+* Video proof of failure
+* Original delivery timestamp
+* Serial number verification
+
+Approved DOA claims are eligible for:
+
+* Full refund
+* Free replacement
+* Expedited shipping (at company discretion)
+
+### 8.2 Post-DOA Defects
+
+Hardware failures after 48 hours fall under **manufacturer warranty**, not refund eligibility.
+
+---
+
+## **9. Warranty vs Refund Distinction**
+
+Refund eligibility ends after the return window. Thereafter:
+
+* Hardware issues are processed through **warranty service**
+* Software issues are governed by the **software vendor**
+* Data loss, corruption, or cyber incidents are **customer responsibility**
+
+Warranty service does **not** entitle the customer to a refund.
+
+---
+
+## **10. Data Security & Customer Responsibility**
+
+Customers must:
+
+* Back up all personal data before return
+* Remove:
+
+  * User accounts
+  * Apple ID / Microsoft accounts
+  * BIOS passwords
+  * Disk encryption
+
+[Company Name] assumes **no liability** for:
+
+* Lost data
+* Breached personal information
+* Forgotten credentials
+* Locked devices
+
+Devices returned with active security locks are **ineligible for refund**.
+
+---
+
+## **11. Fraud Prevention & Abuse Protection**
+
+[Company Name] reserves the right to:
+
+* Deny refunds for suspicious activity
+* Blacklist customers for refund abuse
+* Report fraudulent transactions to authorities
+* Withhold refunds during active investigations
+
+Common abuse indicators include:
+
+* Excessive return frequency
+* Component swapping
+* Multiple claims under different identities
+* Inconsistent serial numbers
+
+---
+
+## **12. Partial Refunds & Deductions**
+
+Partial refunds may be issued for:
+
+* Missing accessories
+* Software activation usage
+* Cosmetic wear
+* Data recovery attempts
+* Unauthorized repairs
+
+Deductions are calculated during inspection.
+
+---
+
+## **13. International Returns**
+
+For international customers:
+
+* Customs duties and taxes are **non-refundable**
+* Cross-border shipping delays do not extend return windows
+* Returned items may be held by customs for inspection
+
+[Company Name] is not liable for:
+
+* Seized shipments
+* Import rejections
+* Export documentation errors made by the customer
+
+---
+
+## **14. Force Majeure**
+
+Refund timelines and obligations may be suspended due to:
+
+* Natural disasters
+* War
+* Cyber attacks
+* Supply chain disruptions
+* Government restrictions
+* Carrier strikes
+
+---
+
+## **15. Return Authorization (RMA) Process**
+
+All returns must follow this process:
+
+1. Submit return request through official support channels
+2. Provide:
+
+   * Order number
+   * Serial number
+   * Reason for return
+3. Receive RMA number
+4. Ship product within **7 days** of RMA issuance
+5. Track shipment until confirmed received
+
+Returns without valid RMA are automatically rejected.
+
+---
+
+## **16. Chargebacks & Payment Disputes**
+
+Customers filing chargebacks:
+
+* Immediately void refund eligibility
+* Trigger internal fraud review
+* May result in permanent account suspension
+
+Refunds will not be issued while disputes are active.
+
+---
+
+## **17. Legal Compliance & Regional Rights**
+
+This Policy does not override:
+
+* Statutory consumer protections
+* EU Right of Withdrawal
+* State-level lemon laws
+* Mandatory cooling-off periods
+
+Where local law conflicts with this Policy, **local law prevails**.
+
+---
+
+## **18. Limitation of Liability**
+
+To the maximum extent permitted by law, [Company Name] shall not be liable for:
+
+* Indirect damages
+* Loss of profits
+* Loss of business
+* Data loss
+* Cybersecurity incidents
+* Third-party software failures
+
+---
+
+## **19. Policy Modifications**
+
+[Company Name] reserves the right to:
+
+* Modify this Policy at any time
+* Apply new terms to future purchases
+* Enforce updated rules without prior notice
+
+The version in effect at the **time of purchase** governs eligibility.
+
+---
+
+## **20. Final Determination Authority**
+
+All refund decisions made by:
+
+* [Company Name] Returns Department
+* Internal Quality Assurance Team
+* Fraud & Risk Unit
+
+are **final and binding**, subject only to statutory legal rights.
+
+---
+
+## **21. Contact Information**
+
+For all return and refund requests:
+
+* **Support Website:** [support.companyname.com]
+* **Email:** [returns@companyname.com](mailto:returns@companyname.com)
+* **Phone:** 1-800-XXX-XXXX
+* **Support Hours:** Monday–Friday, 9 AM–6 PM (Local Time)
