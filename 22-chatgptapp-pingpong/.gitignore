@@ -1,0 +1,14 @@
+node_modules
+.env
+.env.*
+.env.local
+.DS_Store
+.npmrc
+.pypirc
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+public/liveblocks-client.mjs
