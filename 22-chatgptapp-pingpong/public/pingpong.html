@@ -1,0 +1,1961 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Ping Pong Arena</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap");
+
+      :root {
+        --bg-deep: #060f1f;
+        --bg-mid: #0b1d34;
+        --bg-light: #112a45;
+        --ink: #f7f1e6;
+        --muted: rgba(247, 241, 230, 0.6);
+        --accent: #2dd4bf;
+        --accent-warm: #ff6b4a;
+        --accent-gold: #ffd166;
+        --panel: rgba(9, 18, 32, 0.7);
+        --panel-border: rgba(255, 255, 255, 0.08);
+        --shadow: rgba(2, 8, 20, 0.45);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% 18%, rgba(255, 107, 74, 0.28), transparent 45%),
+          radial-gradient(circle at 88% 12%, rgba(45, 212, 191, 0.26), transparent 48%),
+          linear-gradient(160deg, var(--bg-deep) 0%, var(--bg-mid) 45%, #0b1424 100%);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 16px;
+      }
+
+      .scene {
+        width: min(1100px, 100%);
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .hud {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--panel);
+        border-radius: 18px;
+        border: 1px solid var(--panel-border);
+        padding: 12px 16px;
+        box-shadow: 0 18px 40px var(--shadow);
+        backdrop-filter: blur(8px);
+        animation: floatIn 500ms ease-out;
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .title {
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 0.95rem;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .scoreboard {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-weight: 600;
+      }
+
+      .score {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.12em;
+      }
+
+      .score .value {
+        font-size: 1.4rem;
+        letter-spacing: 0.08em;
+      }
+
+      .divider {
+        width: 1px;
+        height: 22px;
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .analysis {
+        display: grid;
+        gap: 8px;
+        background: var(--panel);
+        border-radius: 18px;
+        border: 1px solid var(--panel-border);
+        padding: 12px 16px;
+        box-shadow: 0 18px 40px var(--shadow);
+        backdrop-filter: blur(8px);
+        animation: floatIn 500ms ease-out;
+      }
+
+      .analysis-title {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.72rem;
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .analysis-summary {
+        font-size: 0.9rem;
+        color: var(--ink);
+      }
+
+      .analysis-tips {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 0.85rem;
+        display: grid;
+        gap: 4px;
+      }
+
+      .chip {
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .chip strong {
+        font-weight: 700;
+        color: var(--accent-gold);
+      }
+
+      button {
+        border: none;
+        border-radius: 999px;
+        padding: 8px 16px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #07131e;
+        background: linear-gradient(120deg, var(--accent) 0%, #6ee7b7 100%);
+        cursor: pointer;
+        box-shadow: 0 10px 20px rgba(45, 212, 191, 0.35);
+        transition: transform 150ms ease, box-shadow 150ms ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 24px rgba(45, 212, 191, 0.45);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+      }
+
+      .arena {
+        position: relative;
+        flex: 0 0 auto;
+        height: clamp(320px, 60vh, 560px);
+        background: linear-gradient(140deg, rgba(10, 28, 48, 0.85), rgba(7, 19, 32, 0.92));
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 50px rgba(2, 7, 16, 0.6);
+        overflow: hidden;
+        animation: glowIn 700ms ease-out;
+      }
+
+      .arena::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 32px 32px;
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .arena::after {
+        content: "";
+        position: absolute;
+        inset: -20% 0 0;
+        background: radial-gradient(circle at 50% 0%, rgba(45, 212, 191, 0.18), transparent 60%);
+        opacity: 0.8;
+        pointer-events: none;
+        animation: pulse 4s ease-in-out infinite;
+      }
+
+      canvas {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: block;
+        cursor: crosshair;
+      }
+
+      .overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(4, 8, 20, 0.7);
+        backdrop-filter: blur(6px);
+        transition: opacity 200ms ease;
+      }
+
+      .overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .overlay-card {
+        text-align: center;
+        padding: 22px 26px;
+        border-radius: 18px;
+        background: rgba(10, 20, 36, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      .match-card {
+        text-align: center;
+        padding: 22px 26px;
+        border-radius: 18px;
+        background: rgba(10, 20, 36, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+        width: min(340px, 92%);
+      }
+
+      .match-form {
+        margin-top: 14px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .match-input {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--ink);
+        padding: 10px 12px;
+        font-size: 0.95rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+      }
+
+      .match-input::placeholder {
+        color: rgba(247, 241, 230, 0.45);
+      }
+
+      .match-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .match-copy {
+        background: linear-gradient(120deg, var(--accent-gold) 0%, #ffb347 100%);
+        color: #18120a;
+      }
+
+      .is-hidden {
+        display: none;
+      }
+
+      .overlay-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .overlay-message {
+        margin-top: 6px;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .overlay-tip {
+        margin-top: 10px;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.45);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .overlay-debug {
+        margin-top: 8px;
+        font-size: 0.7rem;
+        color: rgba(247, 241, 230, 0.6);
+        letter-spacing: 0.04em;
+        text-transform: none;
+        word-break: break-word;
+      }
+
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-size: 0.8rem;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent-warm);
+      }
+
+      @keyframes floatIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes glowIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.55;
+        }
+        50% {
+          transform: translateY(4%);
+          opacity: 0.85;
+        }
+      }
+
+      @media (max-width: 820px) {
+        body {
+          padding: 12px;
+        }
+
+        .hud {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .controls {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .analysis {
+          padding: 12px;
+        }
+
+        .footer {
+          flex-direction: column;
+          gap: 6px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="scene">
+      <header class="hud">
+        <div class="brand">
+          <div class="title">Ping Pong</div>
+          <div class="subtitle">Mouse control arena</div>
+        </div>
+        <div class="scoreboard">
+          <div class="score">
+            <span class="label" id="playerLabel">You</span>
+            <span class="value" id="playerScore">0</span>
+          </div>
+          <div class="divider"></div>
+          <div class="score">
+            <span class="label" id="opponentLabel">Opponent</span>
+            <span class="value" id="opponentScore">0</span>
+          </div>
+        </div>
+        <div class="controls">
+          <div class="chip">
+            Difficulty <strong id="difficultyLabel">Medium</strong>
+          </div>
+          <button type="button" id="fullscreenBtn">Fullscreen</button>
+          <button type="button" id="resetBtn">Reset</button>
+        </div>
+      </header>
+
+      <section class="analysis" id="analysisPanel" aria-live="polite">
+        <div class="analysis-title">Coach AI</div>
+        <div class="analysis-summary" id="coachSummary">
+          Ask for a game analysis to get tailored tips.
+        </div>
+        <ul class="analysis-tips" id="coachTips"></ul>
+      </section>
+
+      <section class="arena" id="arena">
+        <canvas id="game" aria-label="Ping Pong arena"></canvas>
+        <div class="overlay" id="overlay" role="status" aria-live="polite">
+          <div class="overlay-card" id="gameOverlayCard">
+            <div class="overlay-title" id="overlayTitle">Move your mouse</div>
+            <div class="overlay-message" id="overlayMessage">
+              Click or press Space to serve
+            </div>
+            <div class="overlay-tip" id="overlayTip">First to 7 wins</div>
+          </div>
+          <div class="match-card is-hidden" id="matchCard">
+            <div class="overlay-title">Play with a friend</div>
+            <div class="overlay-message" id="matchMessage">
+              Create a match and share the code.
+            </div>
+            <div class="match-form">
+              <input
+                class="match-input"
+                id="matchCode"
+                placeholder="Match code"
+                maxlength="6"
+                autocomplete="off"
+              />
+              <div class="match-actions">
+                <button type="button" id="createMatchBtn">Create match</button>
+                <button type="button" id="joinMatchBtn">Join match</button>
+              </div>
+              <button
+                type="button"
+                id="copyMatchBtn"
+                class="match-copy is-hidden"
+              >
+                Copy code
+              </button>
+            </div>
+            <div class="overlay-tip" id="matchStatus">Not connected</div>
+            <div class="overlay-debug is-hidden" id="matchDebug"></div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span>Move or drag to control paddle</span>
+        <span class="dot"></span>
+        <span>Tap arena to serve</span>
+      </footer>
+    </div>
+
+    <script type="module">
+      const canvas = document.getElementById("game");
+      const arena = document.getElementById("arena");
+      const overlay = document.getElementById("overlay");
+      const overlayTitle = document.getElementById("overlayTitle");
+      const overlayMessage = document.getElementById("overlayMessage");
+      const overlayTip = document.getElementById("overlayTip");
+      const gameOverlayCard = document.getElementById("gameOverlayCard");
+      const matchCard = document.getElementById("matchCard");
+      const matchMessage = document.getElementById("matchMessage");
+      const matchStatus = document.getElementById("matchStatus");
+      const matchDebug = document.getElementById("matchDebug");
+      const matchCodeInput = document.getElementById("matchCode");
+      const createMatchBtn = document.getElementById("createMatchBtn");
+      const joinMatchBtn = document.getElementById("joinMatchBtn");
+      const copyMatchBtn = document.getElementById("copyMatchBtn");
+      const playerLabelEl = document.getElementById("playerLabel");
+      const opponentLabelEl = document.getElementById("opponentLabel");
+      const playerScoreEl = document.getElementById("playerScore");
+      const opponentScoreEl = document.getElementById("opponentScore");
+      const difficultyLabel = document.getElementById("difficultyLabel");
+      const fullscreenBtn = document.getElementById("fullscreenBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const coachSummary = document.getElementById("coachSummary");
+      const coachTips = document.getElementById("coachTips");
+
+      const stopMatchOverlayPropagation = (event) => {
+        event.stopPropagation();
+      };
+
+      matchCard.addEventListener("pointerdown", stopMatchOverlayPropagation);
+      matchCard.addEventListener("click", stopMatchOverlayPropagation);
+
+      const ctx = canvas.getContext("2d");
+      const winScore = 7;
+
+      const clamp = (value, min, max) =>
+        Math.max(min, Math.min(max, value));
+
+      const difficultyPresets = {
+        easy: {
+          cpuSpeed: 0.6,
+          reaction: 0.18,
+          ballSpeed: 0.42,
+          angle: Math.PI / 4,
+        },
+        medium: {
+          cpuSpeed: 0.78,
+          reaction: 0.12,
+          ballSpeed: 0.5,
+          angle: Math.PI / 3,
+        },
+        hard: {
+          cpuSpeed: 0.95,
+          reaction: 0.08,
+          ballSpeed: 0.58,
+          angle: Math.PI / 2.7,
+        },
+      };
+
+      const state = {
+        width: 0,
+        height: 0,
+        initialized: false,
+        running: false,
+        matchOver: false,
+        serveDirection: 1,
+        lastTime: 0,
+        difficulty: "medium",
+        displayMode: "inline",
+        playerSide: "left",
+        scores: { left: 0, right: 0 },
+        stats: {
+          startedAt: Date.now(),
+          rallies: 0,
+          totalRallyHits: 0,
+          currentRallyHits: 0,
+          longestRally: 0,
+          playerHits: 0,
+          opponentHits: 0,
+          pointsWon: 0,
+          pointsLost: 0,
+          serves: 0,
+        },
+        analysis: {
+          analysisBySide: null,
+          hostSide: null,
+          analysis: null,
+        },
+        multiplayer: {
+          enabled: false,
+          isHost: false,
+          room: null,
+          client: null,
+          leaveRoom: null,
+          opponentConnected: false,
+          opponentPaddle: 0,
+          opponentPaddleTarget: null,
+          lastBroadcast: 0,
+          matchCode: "",
+          config: null,
+          lastRemoteState: null,
+          remoteBallTarget: null,
+          remoteBallLastAt: 0,
+          userId: null,
+          debug: {
+            status: "initial",
+            othersCount: 0,
+            lastError: "",
+          },
+        },
+        cpu: { speed: 0, reaction: 0.12, nextReact: 0, targetY: 0 },
+        paddles: {
+          player: { x: 0, y: 0, width: 0, height: 0, targetY: 0 },
+          cpu: { x: 0, y: 0, width: 0, height: 0 },
+        },
+        ball: {
+          x: 0,
+          y: 0,
+          radius: 8,
+          vx: 0,
+          vy: 0,
+          baseSpeed: 0,
+          maxBounce: Math.PI / 3,
+        },
+      };
+
+      const normalizePaddle = (y, paddleHeight) => {
+        const span = Math.max(1, state.height - paddleHeight);
+        return clamp(y / span, 0, 1);
+      };
+
+      const denormalizePaddle = (value, paddleHeight) => {
+        const span = Math.max(1, state.height - paddleHeight);
+        return clamp(value, 0, 1) * span;
+      };
+
+      const getBallSnapshot = () => ({
+        x: state.width ? state.ball.x / state.width : 0,
+        y: state.height ? state.ball.y / state.height : 0,
+        vx: state.width ? state.ball.vx / state.width : 0,
+        vy: state.height ? state.ball.vy / state.height : 0,
+      });
+
+      const applyBallSnapshot = (snapshot) => {
+        if (!snapshot) return;
+        state.ball.x = snapshot.x * state.width;
+        state.ball.y = snapshot.y * state.height;
+        state.ball.vx = snapshot.vx * state.width;
+        state.ball.vy = snapshot.vy * state.height;
+      };
+
+      const isBallMoving = () =>
+        Math.abs(state.ball.vx) > 1 || Math.abs(state.ball.vy) > 1;
+
+      const showOverlay = (title, message, tip = "First to 7 wins") => {
+        overlayTitle.textContent = title;
+        overlayMessage.textContent = message;
+        overlayTip.textContent = tip;
+        overlay.classList.remove("hidden");
+        gameOverlayCard.classList.remove("is-hidden");
+        matchCard.classList.add("is-hidden");
+      };
+
+      const showMatchOverlay = (message, status, showCopy = false) => {
+        matchMessage.textContent = message;
+        matchStatus.textContent = status ?? "";
+        overlay.classList.remove("hidden");
+        matchCard.classList.remove("is-hidden");
+        gameOverlayCard.classList.add("is-hidden");
+        copyMatchBtn.classList.toggle("is-hidden", !showCopy);
+      };
+
+      const hideOverlay = () => {
+        overlay.classList.add("hidden");
+      };
+
+      const updateScore = () => {
+        const leftScore = state.scores.left;
+        const rightScore = state.scores.right;
+        if (state.playerSide === "left") {
+          playerScoreEl.textContent = leftScore;
+          opponentScoreEl.textContent = rightScore;
+        } else {
+          playerScoreEl.textContent = rightScore;
+          opponentScoreEl.textContent = leftScore;
+        }
+        playerLabelEl.textContent = "You";
+        opponentLabelEl.textContent = "Opponent";
+      };
+
+      const resetStats = () => {
+        state.stats.startedAt = Date.now();
+        state.stats.rallies = 0;
+        state.stats.totalRallyHits = 0;
+        state.stats.currentRallyHits = 0;
+        state.stats.longestRally = 0;
+        state.stats.playerHits = 0;
+        state.stats.opponentHits = 0;
+        state.stats.pointsWon = 0;
+        state.stats.pointsLost = 0;
+        state.stats.serves = 0;
+      };
+
+      const finalizeRally = () => {
+        const hits = state.stats.currentRallyHits;
+        if (!hits) return;
+        state.stats.rallies += 1;
+        state.stats.totalRallyHits += hits;
+        state.stats.longestRally = Math.max(state.stats.longestRally, hits);
+        state.stats.currentRallyHits = 0;
+      };
+
+      const recordHit = (isPlayer) => {
+        state.stats.currentRallyHits += 1;
+        if (isPlayer) {
+          state.stats.playerHits += 1;
+        } else {
+          state.stats.opponentHits += 1;
+        }
+      };
+
+      let statsReportTimer = null;
+      let lastStatsReportAt = 0;
+      const MIN_STATS_REPORT_MS = 3000;
+
+      const buildStatsPayload = () => {
+        const durationSeconds = Math.max(
+          0,
+          Math.round((Date.now() - state.stats.startedAt) / 1000)
+        );
+        const averageRally = state.stats.rallies
+          ? state.stats.totalRallyHits / state.stats.rallies
+          : 0;
+        return {
+          clientId: getUserId(),
+          timestamp: Date.now(),
+          difficulty: state.difficulty,
+          mode: state.multiplayer.enabled ? "multiplayer" : "solo",
+          role: state.multiplayer.enabled
+            ? state.multiplayer.isHost
+              ? "host"
+              : "guest"
+            : "solo",
+          scores: {
+            left: state.scores.left,
+            right: state.scores.right,
+            playerSide: state.playerSide,
+          },
+          stats: {
+            rallies: state.stats.rallies,
+            totalRallyHits: state.stats.totalRallyHits,
+            longestRally: state.stats.longestRally,
+            averageRally,
+            playerHits: state.stats.playerHits,
+            opponentHits: state.stats.opponentHits,
+            pointsWon: state.stats.pointsWon,
+            pointsLost: state.stats.pointsLost,
+            serves: state.stats.serves,
+            durationSeconds,
+            matchOver: state.matchOver,
+          },
+        };
+      };
+
+      const getOppositeSide = (side) =>
+        side === "left" ? "right" : side === "right" ? "left" : null;
+
+      const getAnalysisPayload = (toolOutput) => {
+        if (!toolOutput) return null;
+        const analysisBySide = toolOutput?.analysisBySide;
+        const hostSide = toolOutput?.hostSide ?? toolOutput?.analysis?.hostSide;
+        if (analysisBySide) {
+          if (state.playerSide && analysisBySide[state.playerSide]) {
+            return analysisBySide[state.playerSide];
+          }
+          if (hostSide) {
+            const otherSide = getOppositeSide(hostSide);
+            if (otherSide && analysisBySide[otherSide]) {
+              return analysisBySide[otherSide];
+            }
+          }
+        }
+        return toolOutput?.analysis ?? null;
+      };
+
+      const renderCoachAnalysis = (analysis) => {
+        if (!analysis || !coachSummary || !coachTips) return;
+        coachSummary.textContent =
+          analysis.summary || "Analysis ready. Check your stats!";
+        coachTips.innerHTML = "";
+        if (Array.isArray(analysis.tips)) {
+          analysis.tips.slice(0, 4).forEach((tip) => {
+            const item = document.createElement("li");
+            item.textContent = tip;
+            coachTips.appendChild(item);
+          });
+        }
+      };
+
+      const cacheAnalysisPayload = (payload) => {
+        if (!payload) return;
+        state.analysis.analysisBySide = payload.analysisBySide ?? null;
+        state.analysis.hostSide = payload.hostSide ?? null;
+        state.analysis.analysis = payload.analysis ?? null;
+      };
+
+      const renderAnalysisFromCache = () => {
+        const payload = {
+          analysisBySide: state.analysis.analysisBySide,
+          hostSide: state.analysis.hostSide,
+          analysis: state.analysis.analysis,
+        };
+        const analysisPayload = getAnalysisPayload(payload);
+        if (analysisPayload) {
+          renderCoachAnalysis(analysisPayload);
+        }
+      };
+
+      const broadcastAnalysisIfHost = (analysis, toolOutput) => {
+        if (
+          !analysis ||
+          !state.multiplayer.enabled ||
+          !state.multiplayer.isHost ||
+          !state.multiplayer.room ||
+          typeof state.multiplayer.room.broadcastEvent !== "function"
+        ) {
+          return;
+        }
+        const payload = {
+          analysisBySide: toolOutput?.analysisBySide ?? null,
+          hostSide: state.playerSide,
+          analysis,
+          at: Date.now(),
+        };
+        state.multiplayer.room.broadcastEvent({
+          type: "analysis",
+          payload,
+        });
+      };
+
+      const sendStatsReport = async () => {
+        if (typeof window.openai?.callTool !== "function") return;
+        if (state.multiplayer.enabled && !state.multiplayer.isHost) {
+          return;
+        }
+        lastStatsReportAt = Date.now();
+        try {
+          await window.openai.callTool("report_game_stats", buildStatsPayload());
+        } catch (error) {
+          console.warn("Stats report failed:", error);
+        }
+      };
+
+      const queueStatsReport = () => {
+        const now = Date.now();
+        const elapsed = now - lastStatsReportAt;
+        if (elapsed >= MIN_STATS_REPORT_MS) {
+          sendStatsReport();
+          return;
+        }
+        if (statsReportTimer) return;
+        statsReportTimer = setTimeout(() => {
+          statsReportTimer = null;
+          sendStatsReport();
+        }, MIN_STATS_REPORT_MS - elapsed);
+      };
+
+      const applyDifficulty = (level) => {
+        const preset = difficultyPresets[level] || difficultyPresets.medium;
+        state.difficulty = level;
+        difficultyLabel.textContent =
+          level.charAt(0).toUpperCase() + level.slice(1);
+        state.ball.baseSpeed = state.width * preset.ballSpeed;
+        state.ball.maxBounce = preset.angle;
+        state.cpu.speed = state.height * preset.cpuSpeed;
+        state.cpu.reaction = preset.reaction;
+      };
+
+      const setPlayerSide = (side) => {
+        state.playerSide = side;
+        sizeEntities();
+        updateScore();
+        renderAnalysisFromCache();
+      };
+
+      const broadcastState = (force = false) => {
+        if (
+          !state.multiplayer.enabled ||
+          !state.multiplayer.isHost ||
+          !state.multiplayer.room ||
+          typeof state.multiplayer.room.broadcastEvent !== "function"
+        ) {
+          return;
+        }
+        const now = performance.now();
+        if (!force && now - state.multiplayer.lastBroadcast < 16) {
+          return;
+        }
+        state.multiplayer.lastBroadcast = now;
+        state.multiplayer.room.broadcastEvent({
+          type: "state",
+          payload: {
+            ball: getBallSnapshot(),
+            scores: { ...state.scores },
+            running: state.running,
+            matchOver: state.matchOver,
+            serveDirection: state.serveDirection,
+            stats: {
+              rallies: state.stats.rallies,
+              totalRallyHits: state.stats.totalRallyHits,
+              longestRally: state.stats.longestRally,
+              playerHits: state.stats.playerHits,
+              opponentHits: state.stats.opponentHits,
+              pointsWon: state.stats.pointsWon,
+              pointsLost: state.stats.pointsLost,
+              serves: state.stats.serves,
+              startedAt: state.stats.startedAt,
+            },
+          },
+        });
+      };
+
+      const updateGuestOverlay = () => {
+        if (!state.multiplayer.enabled || state.multiplayer.isHost) return;
+        if (!state.multiplayer.opponentConnected) {
+          const code = state.multiplayer.matchCode;
+          showMatchOverlay(
+            "Waiting for host to connect.",
+            code ? `Code: ${code} — connecting...` : "Connecting to host...",
+            Boolean(code)
+          );
+          return;
+        }
+        if (state.running || isBallMoving()) {
+          hideOverlay();
+          return;
+        }
+        if (state.matchOver) {
+          const winner =
+            state.scores.left > state.scores.right ? "left" : "right";
+          const title =
+            winner === state.playerSide ? "You win" : "Opponent wins";
+          showOverlay(title, "Host will restart the match");
+          return;
+        }
+        showOverlay("Waiting for serve", "Host will serve soon");
+      };
+
+      const applyRemoteState = (payload) => {
+        if (!payload) return;
+        if (state.multiplayer.isHost) return;
+        if (payload.scores) {
+          state.scores.left =
+            typeof payload.scores.left === "number"
+              ? payload.scores.left
+              : state.scores.left;
+          state.scores.right =
+            typeof payload.scores.right === "number"
+              ? payload.scores.right
+              : state.scores.right;
+        }
+        if (typeof payload.running === "boolean") {
+          state.running = payload.running;
+        }
+        if (typeof payload.matchOver === "boolean") {
+          state.matchOver = payload.matchOver;
+        }
+        if (typeof payload.serveDirection === "number") {
+          state.serveDirection = payload.serveDirection;
+        }
+        if (payload.stats && typeof payload.stats === "object") {
+          state.stats.rallies =
+            typeof payload.stats.rallies === "number"
+              ? payload.stats.rallies
+              : state.stats.rallies;
+          state.stats.totalRallyHits =
+            typeof payload.stats.totalRallyHits === "number"
+              ? payload.stats.totalRallyHits
+              : state.stats.totalRallyHits;
+          state.stats.longestRally =
+            typeof payload.stats.longestRally === "number"
+              ? payload.stats.longestRally
+              : state.stats.longestRally;
+          state.stats.playerHits =
+            typeof payload.stats.playerHits === "number"
+              ? payload.stats.playerHits
+              : state.stats.playerHits;
+          state.stats.opponentHits =
+            typeof payload.stats.opponentHits === "number"
+              ? payload.stats.opponentHits
+              : state.stats.opponentHits;
+          state.stats.pointsWon =
+            typeof payload.stats.pointsWon === "number"
+              ? payload.stats.pointsWon
+              : state.stats.pointsWon;
+          state.stats.pointsLost =
+            typeof payload.stats.pointsLost === "number"
+              ? payload.stats.pointsLost
+              : state.stats.pointsLost;
+          state.stats.serves =
+            typeof payload.stats.serves === "number"
+              ? payload.stats.serves
+              : state.stats.serves;
+          state.stats.startedAt =
+            typeof payload.stats.startedAt === "number"
+              ? payload.stats.startedAt
+              : state.stats.startedAt;
+        }
+        if (payload.ball) {
+          const shouldSnap =
+            !state.running ||
+            state.matchOver ||
+            !state.multiplayer.remoteBallTarget;
+          state.multiplayer.remoteBallTarget = payload.ball;
+          state.multiplayer.remoteBallLastAt = performance.now();
+          if (shouldSnap) {
+            applyBallSnapshot(payload.ball);
+          }
+        }
+        updateScore();
+        updateGuestOverlay();
+      };
+
+      const normalizeMatchCode = (value) =>
+        (value || "")
+          .replace(/[^a-z0-9]/gi, "")
+          .slice(0, 6)
+          .toUpperCase();
+
+      const setMatchCode = (value) => {
+        const code = normalizeMatchCode(value);
+        state.multiplayer.matchCode = code;
+        matchCodeInput.value = code;
+        copyMatchBtn.classList.toggle("is-hidden", !code);
+        return code;
+      };
+
+      let fallbackUserId = null;
+      const getUserId = () => {
+        const sessionKey = "pingpong_session_id";
+        try {
+          const existingSession = sessionStorage.getItem(sessionKey);
+          if (existingSession) return existingSession;
+          const freshSession = crypto.randomUUID();
+          sessionStorage.setItem(sessionKey, freshSession);
+          return freshSession;
+        } catch (error) {
+          if (fallbackUserId) return fallbackUserId;
+          fallbackUserId = crypto.randomUUID();
+          return fallbackUserId;
+        }
+      };
+
+      const getMultiplayerConfig = () => {
+        const meta = window.openai?.toolResponseMetadata ?? {};
+        const metaKeys = Object.keys(meta);
+        let clientUrl = meta.liveblocksClientUrl ?? null;
+        if (!clientUrl && meta.liveblocksAuthUrl) {
+          try {
+            clientUrl =
+              new URL(meta.liveblocksAuthUrl).origin + "/liveblocks-client.mjs";
+          } catch {
+            clientUrl = null;
+          }
+        }
+        return {
+          publicKey: meta.liveblocksPublicKey ?? null,
+          authUrl: meta.liveblocksAuthUrl ?? null,
+          clientUrl,
+          metaKeys,
+        };
+      };
+
+      const setMatchDebug = (message) => {
+        if (!matchDebug) return;
+        matchDebug.textContent = message ?? "";
+        matchDebug.classList.toggle("is-hidden", !message);
+      };
+
+      const updateMultiplayerDebug = () => {
+        if (!matchDebug) return;
+        const role = state.multiplayer.isHost ? "host" : "guest";
+        const status = state.multiplayer.debug.status ?? "unknown";
+        const others = state.multiplayer.debug.othersCount ?? 0;
+        const error = state.multiplayer.debug.lastError || "";
+        const roomId = state.multiplayer.matchCode
+          ? `pingpong-${state.multiplayer.matchCode}`
+          : "none";
+        const userId = state.multiplayer.userId
+          ? state.multiplayer.userId.slice(0, 4)
+          : "none";
+        const base = `role=${role} status=${status} others=${others} room=${roomId} user=${userId}`;
+        setMatchDebug(error ? `${base} error=${error}` : base);
+      };
+
+      const formatKeySnippet = (value) => {
+        if (!value || typeof value !== "string") return "missing";
+        if (value.length <= 12) return value;
+        return `${value.slice(0, 8)}...${value.slice(-4)}`;
+      };
+
+      const logMultiplayerError = (label, error, extra = "") => {
+        const message = error?.message || String(error || "Unknown error");
+        console.error(`[multiplayer] ${label}: ${message}`, error);
+        const details = extra ? `${message} (${extra})` : message;
+        state.multiplayer.debug.lastError = details;
+        updateMultiplayerDebug();
+      };
+
+      const loadLiveblocksClient = async (clientUrl) => {
+        const sources = [
+          clientUrl,
+          "https://unpkg.com/@liveblocks/client@3?module",
+          "https://cdn.jsdelivr.net/npm/@liveblocks/client@3/+esm",
+        ].filter(Boolean);
+        let lastError = null;
+        for (const source of sources) {
+          try {
+            return await import(source);
+          } catch (error) {
+            lastError = error;
+          }
+        }
+        const error = new Error(
+          `Liveblocks client failed to load from: ${sources.join(", ")}`
+        );
+        error.cause = lastError;
+        throw error;
+      };
+
+      const connectToRoom = (roomCode, role) => {
+        if (!state.multiplayer.client) {
+          showMatchOverlay(
+            "Multiplayer is not ready yet.",
+            "Liveblocks client missing"
+          );
+          updateMultiplayerDebug();
+          return;
+        }
+        const code = setMatchCode(roomCode);
+        if (!code) {
+          showMatchOverlay("Enter a match code to join.", "Invalid code");
+          updateMultiplayerDebug();
+          return;
+        }
+        if (state.multiplayer.room) {
+          if (typeof state.multiplayer.leaveRoom === "function") {
+            state.multiplayer.leaveRoom();
+          } else if (typeof state.multiplayer.room.leave === "function") {
+            state.multiplayer.room.leave();
+          } else if (typeof state.multiplayer.room.disconnect === "function") {
+            state.multiplayer.room.disconnect();
+          }
+          state.multiplayer.leaveRoom = null;
+        }
+        state.multiplayer.enabled = true;
+        state.multiplayer.isHost = role === "host";
+        state.multiplayer.opponentConnected = false;
+        state.multiplayer.opponentPaddle = 0;
+        state.multiplayer.opponentPaddleTarget = null;
+        state.multiplayer.debug.status = "connecting";
+        state.multiplayer.debug.othersCount = 0;
+        state.multiplayer.debug.lastError = "";
+        state.multiplayer.remoteBallTarget = null;
+        state.multiplayer.remoteBallLastAt = 0;
+        setPlayerSide(role === "host" ? "left" : "right");
+
+        const roomId = `pingpong-${code}`;
+        let room = null;
+        let leaveRoom = null;
+        try {
+          if (typeof state.multiplayer.client.enterRoom === "function") {
+            const result = state.multiplayer.client.enterRoom(roomId, {
+              initialPresence: {
+                paddleY: normalizePaddle(
+                  state.paddles.player.targetY,
+                  state.paddles.player.height
+                ),
+                role,
+              },
+            });
+            room = result?.room ?? result;
+            leaveRoom = result?.leave ?? null;
+          } else if (typeof state.multiplayer.client.enter === "function") {
+            room = state.multiplayer.client.enter(roomId, {
+              initialPresence: {
+                paddleY: normalizePaddle(
+                  state.paddles.player.targetY,
+                  state.paddles.player.height
+                ),
+                role,
+              },
+            });
+          } else {
+            throw new Error("Liveblocks client missing enterRoom/enter");
+          }
+        } catch (error) {
+          logMultiplayerError("Room enter failed", error, `room=${roomId}`);
+          showMatchOverlay("Unable to join room.", "Check Liveblocks auth.");
+          return;
+        }
+        state.multiplayer.room = room;
+        state.multiplayer.leaveRoom = leaveRoom;
+        updateMultiplayerDebug();
+
+        room.subscribe("status", (status) => {
+          state.multiplayer.debug.status = status;
+          updateMultiplayerDebug();
+        });
+
+        room.subscribe("error", (error) => {
+          logMultiplayerError("Room error", error);
+        });
+
+        room.subscribe("others", (others) => {
+          const list = Array.isArray(others)
+            ? others
+            : others?.toArray?.() ?? [];
+          state.multiplayer.debug.othersCount = list.length;
+          const opponent = list[0];
+          const wasConnected = state.multiplayer.opponentConnected;
+          state.multiplayer.opponentConnected = Boolean(opponent);
+          if (opponent?.presence?.paddleY !== undefined) {
+            state.multiplayer.opponentPaddle = opponent.presence.paddleY;
+            if (state.multiplayer.isHost) {
+              state.paddles.cpu.y = clamp(
+                denormalizePaddle(
+                  state.multiplayer.opponentPaddle,
+                  state.paddles.cpu.height
+                ),
+                0,
+                state.height - state.paddles.cpu.height
+              );
+            } else {
+              state.multiplayer.opponentPaddleTarget =
+                state.multiplayer.opponentPaddle;
+            }
+          }
+          if (state.multiplayer.isHost) {
+            if (state.multiplayer.opponentConnected) {
+              if (!wasConnected) {
+                showOverlay("Move your mouse", "Click or press Space to serve");
+                state.running = false;
+                broadcastState(true);
+                setTimeout(() => {
+                  if (
+                    state.multiplayer.isHost &&
+                    state.multiplayer.opponentConnected &&
+                    !state.running &&
+                    !state.matchOver
+                  ) {
+                    serveBall();
+                  }
+                }, 200);
+              }
+            } else {
+              resetMatch();
+            }
+          } else {
+            updateGuestOverlay();
+          }
+          updateMultiplayerDebug();
+        });
+
+        room.subscribe("event", (payload) => {
+          const event = payload?.event ?? payload;
+          if (event?.type === "state") {
+            state.multiplayer.lastRemoteState = event.payload;
+            applyRemoteState(event.payload);
+            return;
+          }
+          if (event?.type === "analysis") {
+            const payload = event.payload ?? {};
+            cacheAnalysisPayload(payload);
+            const analysisPayload = getAnalysisPayload(payload);
+            if (analysisPayload) {
+              renderCoachAnalysis(analysisPayload);
+            }
+          }
+        });
+
+        if (state.multiplayer.isHost) {
+          resetMatch();
+        } else {
+          updateGuestOverlay();
+        }
+      };
+
+      const initMultiplayer = async () => {
+        const config = getMultiplayerConfig();
+        if (!config.publicKey && !config.authUrl) {
+          setMatchDebug(
+            `Missing config: publicKey=${formatKeySnippet(
+              config.publicKey
+            )}, authUrl=${config.authUrl ?? "missing"}, metaKeys=${
+              config.metaKeys?.length ? config.metaKeys.join("|") : "none"
+            }`
+          );
+          return false;
+        }
+        state.multiplayer.config = config;
+        try {
+          const { createClient } = await loadLiveblocksClient(config.clientUrl);
+          const userId = getUserId();
+          state.multiplayer.userId = userId;
+          const clientOptions = { throttle: 16 };
+          if (config.authUrl) {
+            clientOptions.authEndpoint = async (room) => {
+              const response = await fetch(config.authUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                  room,
+                }),
+              });
+              if (!response.ok) {
+                throw new Error(`Auth failed: ${response.status}`);
+              }
+              return response.json();
+            };
+          } else {
+            clientOptions.publicApiKey = config.publicKey;
+          }
+          state.multiplayer.client = createClient(clientOptions);
+        } catch (error) {
+          logMultiplayerError(
+            "Unable to load Liveblocks client",
+            error,
+            `clientUrl=${config.clientUrl ?? "missing"}`
+          );
+          showMatchOverlay(
+            "Multiplayer failed to load.",
+            "Check the Liveblocks client URL."
+          );
+          return false;
+        }
+
+        state.multiplayer.enabled = true;
+        updateMultiplayerDebug();
+
+        matchCodeInput.addEventListener("input", (event) => {
+          setMatchCode(event.target.value);
+        });
+
+        createMatchBtn.addEventListener("click", () => {
+          const code = setMatchCode(crypto.randomUUID().slice(0, 6));
+          showMatchOverlay(
+            "Share this code with your opponent.",
+            `Code: ${code} — waiting for opponent`,
+            true
+          );
+          updateMultiplayerDebug();
+          connectToRoom(code, "host");
+        });
+
+        joinMatchBtn.addEventListener("click", () => {
+          const code = setMatchCode(matchCodeInput.value);
+          showMatchOverlay("Joining match...", `Code: ${code}`, Boolean(code));
+          updateMultiplayerDebug();
+          connectToRoom(code, "guest");
+        });
+
+        copyMatchBtn.addEventListener("click", async () => {
+          const code = state.multiplayer.matchCode;
+          if (!code) return;
+          try {
+            await navigator.clipboard.writeText(code);
+            matchStatus.textContent = `Copied: ${code}`;
+          } catch (error) {
+            console.warn("Clipboard unavailable:", error);
+            matchStatus.textContent = `Copy this code: ${code}`;
+          }
+        });
+
+        showMatchOverlay(
+          "Create a match and share the code.",
+          "Not connected"
+        );
+        return true;
+      };
+
+      const sizeEntities = () => {
+        const { width, height } = state;
+        state.ball.radius = Math.max(6, Math.min(12, width * 0.012));
+        state.paddles.player.width = Math.max(8, width * 0.012);
+        state.paddles.player.height = Math.max(60, height * 0.18);
+        state.paddles.cpu.width = state.paddles.player.width;
+        state.paddles.cpu.height = Math.max(50, height * 0.16);
+        const leftX = Math.max(16, width * 0.035);
+        const rightX = width - state.paddles.cpu.width - leftX;
+        if (state.playerSide === "left") {
+          state.paddles.player.x = leftX;
+          state.paddles.cpu.x = rightX;
+        } else {
+          state.paddles.player.x = rightX;
+          state.paddles.cpu.x = leftX;
+        }
+        applyDifficulty(state.difficulty);
+      };
+
+      const resetPositions = () => {
+        state.paddles.player.y =
+          (state.height - state.paddles.player.height) / 2;
+        state.paddles.player.targetY = state.paddles.player.y;
+        state.paddles.cpu.y =
+          (state.height - state.paddles.cpu.height) / 2;
+        state.cpu.targetY = state.paddles.cpu.y;
+        state.ball.x = state.width / 2;
+        state.ball.y = state.height / 2;
+        state.ball.vx = 0;
+        state.ball.vy = 0;
+      };
+
+      const resetMatch = (options = {}) => {
+        if (state.multiplayer.enabled && !state.multiplayer.isHost && !options.force) {
+          return;
+        }
+        resetStats();
+        state.scores.left = 0;
+        state.scores.right = 0;
+        state.matchOver = false;
+        state.serveDirection = Math.random() > 0.5 ? 1 : -1;
+        updateScore();
+        resetPositions();
+        state.running = false;
+        if (state.multiplayer.enabled && !state.multiplayer.opponentConnected) {
+          const code = state.multiplayer.matchCode;
+          showMatchOverlay(
+            "Share the code so your opponent can join.",
+            code ? `Code: ${code} — waiting for opponent` : "Waiting for opponent",
+            Boolean(code)
+          );
+          return;
+        }
+        showOverlay("Move your mouse", "Click or press Space to serve");
+        broadcastState(true);
+        queueStatsReport();
+      };
+
+      const scorePoint = (winner) => {
+        if (winner === "left") {
+          state.scores.left += 1;
+        } else {
+          state.scores.right += 1;
+        }
+        if (winner === state.playerSide) {
+          state.stats.pointsWon += 1;
+        } else {
+          state.stats.pointsLost += 1;
+        }
+        finalizeRally();
+        updateScore();
+        state.serveDirection = winner === "left" ? 1 : -1;
+        state.running = false;
+
+        if (state.scores.left >= winScore || state.scores.right >= winScore) {
+          state.matchOver = true;
+          const title =
+            winner === state.playerSide ? "You win" : "Opponent wins";
+          showOverlay(title, "Click or press Space to play again");
+          resetPositions();
+          broadcastState(true);
+          queueStatsReport();
+          return;
+        }
+
+        showOverlay(
+          winner === state.playerSide ? "Point for you" : "Opponent scores",
+          "Click or press Space to serve"
+        );
+        resetPositions();
+        broadcastState(true);
+        queueStatsReport();
+      };
+
+      const serveBall = () => {
+        if (state.running) return;
+        if (state.multiplayer.enabled && !state.multiplayer.isHost) {
+          if (!isBallMoving()) {
+            showOverlay("Waiting for serve", "Host will serve soon");
+          }
+          return;
+        }
+        if (state.multiplayer.enabled && !state.multiplayer.opponentConnected) {
+          const code = state.multiplayer.matchCode;
+          showMatchOverlay(
+            "Share the code so your opponent can join.",
+            code ? `Code: ${code} — waiting for opponent` : "Waiting for opponent",
+            Boolean(code)
+          );
+          return;
+        }
+        if (state.matchOver) {
+          resetMatch();
+          return;
+        }
+        hideOverlay();
+        const angleRange = state.ball.maxBounce * 0.6;
+        const angle = (Math.random() - 0.5) * angleRange * 2;
+        const speed = state.ball.baseSpeed;
+        state.ball.vx = state.serveDirection * Math.cos(angle) * speed;
+        state.ball.vy = Math.sin(angle) * speed;
+        state.stats.serves += 1;
+        state.running = true;
+        broadcastState(true);
+      };
+
+      const intersects = (paddle) => {
+        return (
+          state.ball.x - state.ball.radius < paddle.x + paddle.width &&
+          state.ball.x + state.ball.radius > paddle.x &&
+          state.ball.y - state.ball.radius < paddle.y + paddle.height &&
+          state.ball.y + state.ball.radius > paddle.y
+        );
+      };
+
+      const bounceOff = (paddle, direction) => {
+        const relative =
+          (state.ball.y - (paddle.y + paddle.height / 2)) /
+          (paddle.height / 2);
+        const clamped = clamp(relative, -1, 1);
+        const bounceAngle = clamped * state.ball.maxBounce;
+        const currentSpeed = Math.hypot(state.ball.vx, state.ball.vy);
+        const nextSpeed = Math.min(
+          state.ball.baseSpeed * 1.8,
+          currentSpeed * 1.05 + 18
+        );
+        state.ball.vx = direction * Math.cos(bounceAngle) * nextSpeed;
+        state.ball.vy = Math.sin(bounceAngle) * nextSpeed;
+        state.ball.x =
+          direction > 0
+            ? paddle.x + paddle.width + state.ball.radius
+            : paddle.x - state.ball.radius;
+        recordHit(paddle === state.paddles.player);
+      };
+
+      const updateCPU = (dt) => {
+        state.cpu.nextReact -= dt;
+        if (state.cpu.nextReact <= 0) {
+          const target =
+            state.ball.vx > 0
+              ? state.ball.y - state.paddles.cpu.height / 2
+              : state.height / 2 - state.paddles.cpu.height / 2;
+          state.cpu.targetY = target;
+          state.cpu.nextReact = state.cpu.reaction;
+        }
+        const delta = state.cpu.targetY - state.paddles.cpu.y;
+        const step = clamp(delta, -state.cpu.speed * dt, state.cpu.speed * dt);
+        state.paddles.cpu.y = clamp(
+          state.paddles.cpu.y + step,
+          0,
+          state.height - state.paddles.cpu.height
+        );
+      };
+
+      const updateOpponentFromPresence = () => {
+        if (
+          !state.multiplayer.enabled ||
+          !state.multiplayer.isHost ||
+          !state.multiplayer.opponentConnected
+        ) {
+          return false;
+        }
+        const normalized = state.multiplayer.opponentPaddle;
+        if (typeof normalized !== "number") return false;
+        state.paddles.cpu.y = clamp(
+          denormalizePaddle(normalized, state.paddles.cpu.height),
+          0,
+          state.height - state.paddles.cpu.height
+        );
+        return true;
+      };
+
+      const update = (dt) => {
+        const player = state.paddles.player;
+        const playerDelta = player.targetY - player.y;
+        player.y += playerDelta * Math.min(1, dt * 18);
+        player.y = clamp(player.y, 0, state.height - player.height);
+
+        if (state.multiplayer.enabled) {
+          if (!state.multiplayer.isHost) {
+            if (state.multiplayer.remoteBallTarget) {
+              const target = state.multiplayer.remoteBallTarget;
+              const targetX = target.x * state.width;
+              const targetY = target.y * state.height;
+              const targetVX = target.vx * state.width;
+              const targetVY = target.vy * state.height;
+              const blend = Math.min(1, dt * 12);
+              state.ball.x += (targetX - state.ball.x) * blend;
+              state.ball.y += (targetY - state.ball.y) * blend;
+              state.ball.vx += (targetVX - state.ball.vx) * blend;
+              state.ball.vy += (targetVY - state.ball.vy) * blend;
+            }
+            if (state.multiplayer.opponentPaddleTarget !== null) {
+              const targetY = denormalizePaddle(
+                state.multiplayer.opponentPaddleTarget,
+                state.paddles.cpu.height
+              );
+              const delta = targetY - state.paddles.cpu.y;
+              state.paddles.cpu.y += delta * Math.min(1, dt * 18);
+            }
+            return;
+          }
+          if (!updateOpponentFromPresence()) {
+            state.paddles.cpu.y = clamp(
+              state.paddles.cpu.y,
+              0,
+              state.height - state.paddles.cpu.height
+            );
+          }
+        } else {
+          updateCPU(dt);
+        }
+
+        if (!state.running) return;
+
+        state.ball.x += state.ball.vx * dt;
+        state.ball.y += state.ball.vy * dt;
+
+        if (state.ball.y - state.ball.radius <= 0) {
+          state.ball.y = state.ball.radius;
+          state.ball.vy = Math.abs(state.ball.vy);
+        }
+        if (state.ball.y + state.ball.radius >= state.height) {
+          state.ball.y = state.height - state.ball.radius;
+          state.ball.vy = -Math.abs(state.ball.vy);
+        }
+
+        const leftPaddle =
+          state.paddles.player.x < state.paddles.cpu.x
+            ? state.paddles.player
+            : state.paddles.cpu;
+        const rightPaddle =
+          leftPaddle === state.paddles.player
+            ? state.paddles.cpu
+            : state.paddles.player;
+
+        if (state.ball.vx < 0 && intersects(leftPaddle)) {
+          bounceOff(leftPaddle, 1);
+        }
+        if (state.ball.vx > 0 && intersects(rightPaddle)) {
+          bounceOff(rightPaddle, -1);
+        }
+
+        if (state.ball.x < -state.ball.radius) {
+          scorePoint("right");
+        }
+        if (state.ball.x > state.width + state.ball.radius) {
+          scorePoint("left");
+        }
+      };
+
+      const drawPaddle = (paddle, isPlayer) => {
+        const gradient = ctx.createLinearGradient(
+          paddle.x,
+          paddle.y,
+          paddle.x + paddle.width,
+          paddle.y + paddle.height
+        );
+        if (isPlayer) {
+          gradient.addColorStop(0, "rgba(45, 212, 191, 0.95)");
+          gradient.addColorStop(1, "rgba(45, 212, 191, 0.35)");
+        } else {
+          gradient.addColorStop(0, "rgba(255, 107, 74, 0.95)");
+          gradient.addColorStop(1, "rgba(255, 107, 74, 0.4)");
+        }
+        ctx.save();
+        ctx.fillStyle = gradient;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
+        ctx.shadowBlur = 12;
+        ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+        ctx.restore();
+      };
+
+      const drawBall = () => {
+        ctx.save();
+        const gradient = ctx.createRadialGradient(
+          state.ball.x - state.ball.radius * 0.3,
+          state.ball.y - state.ball.radius * 0.3,
+          state.ball.radius * 0.2,
+          state.ball.x,
+          state.ball.y,
+          state.ball.radius
+        );
+        gradient.addColorStop(0, "#fff8e6");
+        gradient.addColorStop(1, "rgba(255, 209, 102, 0.8)");
+        ctx.fillStyle = gradient;
+        ctx.shadowColor = "rgba(255, 209, 102, 0.45)";
+        ctx.shadowBlur = 16;
+        ctx.beginPath();
+        ctx.arc(state.ball.x, state.ball.y, state.ball.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      };
+
+      const draw = () => {
+        ctx.clearRect(0, 0, state.width, state.height);
+
+        ctx.save();
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.18)";
+        ctx.setLineDash([10, 16]);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(state.width / 2, 24);
+        ctx.lineTo(state.width / 2, state.height - 24);
+        ctx.stroke();
+        ctx.restore();
+
+        drawPaddle(state.paddles.player, true);
+        drawPaddle(state.paddles.cpu, false);
+        drawBall();
+      };
+
+      const loop = (timestamp) => {
+        if (!state.lastTime) state.lastTime = timestamp;
+        const dt = Math.min((timestamp - state.lastTime) / 1000, 0.033);
+        state.lastTime = timestamp;
+        update(dt);
+        if (state.running && !overlay.classList.contains("hidden")) {
+          hideOverlay();
+        }
+        draw();
+        broadcastState();
+        requestAnimationFrame(loop);
+      };
+
+      const resize = () => {
+        const rect = arena.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const scale = window.devicePixelRatio || 1;
+        canvas.width = Math.round(rect.width * scale);
+        canvas.height = Math.round(rect.height * scale);
+        canvas.style.width = `${rect.width}px`;
+        canvas.style.height = `${rect.height}px`;
+        ctx.setTransform(scale, 0, 0, scale, 0, 0);
+
+        const prevWidth = state.width || rect.width;
+        const prevHeight = state.height || rect.height;
+        state.width = rect.width;
+        state.height = rect.height;
+
+        sizeEntities();
+
+        if (!state.initialized) {
+          resetPositions();
+          state.initialized = true;
+          return;
+        }
+
+        const ratioX = rect.width / prevWidth;
+        const ratioY = rect.height / prevHeight;
+        state.paddles.player.y *= ratioY;
+        state.paddles.player.targetY *= ratioY;
+        state.paddles.cpu.y *= ratioY;
+        state.ball.x *= ratioX;
+        state.ball.y *= ratioY;
+
+        state.paddles.player.y = clamp(
+          state.paddles.player.y,
+          0,
+          state.height - state.paddles.player.height
+        );
+        state.paddles.cpu.y = clamp(
+          state.paddles.cpu.y,
+          0,
+          state.height - state.paddles.cpu.height
+        );
+        state.ball.x = clamp(
+          state.ball.x,
+          state.ball.radius,
+          state.width - state.ball.radius
+        );
+        state.ball.y = clamp(
+          state.ball.y,
+          state.ball.radius,
+          state.height - state.ball.radius
+        );
+      };
+
+      let presenceRaf = null;
+
+      const schedulePresenceUpdate = () => {
+        if (
+          !state.multiplayer.enabled ||
+          !state.multiplayer.room ||
+          typeof state.multiplayer.room.updatePresence !== "function"
+        ) {
+          return;
+        }
+        if (presenceRaf) return;
+        presenceRaf = requestAnimationFrame(() => {
+          presenceRaf = null;
+          state.multiplayer.room.updatePresence({
+            paddleY: normalizePaddle(
+              state.paddles.player.targetY,
+              state.paddles.player.height
+            ),
+          });
+        });
+      };
+
+      const updatePointer = (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const y = event.clientY - rect.top;
+        state.paddles.player.targetY = clamp(
+          y - state.paddles.player.height / 2,
+          0,
+          state.height - state.paddles.player.height
+        );
+        schedulePresenceUpdate();
+      };
+
+      arena.addEventListener("pointerdown", (event) => {
+        arena.setPointerCapture(event.pointerId);
+        updatePointer(event);
+        serveBall();
+      });
+
+      arena.addEventListener("pointermove", updatePointer, { passive: true });
+      arena.addEventListener("pointerup", (event) => {
+        arena.releasePointerCapture(event.pointerId);
+      });
+
+      window.addEventListener("keydown", (event) => {
+        if (event.code === "Space") {
+          event.preventDefault();
+          serveBall();
+        }
+      });
+
+      resetBtn.addEventListener("click", () => {
+        if (state.multiplayer.enabled && !state.multiplayer.isHost) {
+          showOverlay("Host controls reset", "Ask the host to restart");
+          return;
+        }
+        resetMatch();
+        broadcastState(true);
+      });
+      window.addEventListener("resize", resize);
+
+      const canRequestDisplayMode = () =>
+        typeof window.openai?.requestDisplayMode === "function";
+
+      const canUseFullscreenApi = () =>
+        Boolean(document.fullscreenEnabled && arena.requestFullscreen);
+
+      const getCurrentDisplayMode = () =>
+        window.openai?.displayMode ?? state.displayMode;
+
+      const syncFullscreenButton = () => {
+        const isFullscreen =
+          getCurrentDisplayMode() === "fullscreen" ||
+          Boolean(document.fullscreenElement);
+        fullscreenBtn.textContent = isFullscreen
+          ? "Exit Fullscreen"
+          : "Fullscreen";
+        fullscreenBtn.disabled = !(canRequestDisplayMode() || canUseFullscreenApi());
+      };
+
+      const setDisplayMode = (mode) => {
+        if (mode) {
+          state.displayMode = mode;
+        }
+        syncFullscreenButton();
+      };
+
+      fullscreenBtn.addEventListener("click", async () => {
+        const currentMode = getCurrentDisplayMode();
+        const nextMode = currentMode === "fullscreen" ? "inline" : "fullscreen";
+
+        try {
+          if (window.openai?.requestDisplayMode) {
+            await window.openai.requestDisplayMode({ mode: nextMode });
+            setDisplayMode(nextMode);
+            resize();
+            return;
+          }
+          if (document.fullscreenElement) {
+            await document.exitFullscreen();
+            return;
+          }
+          await arena.requestFullscreen();
+        } catch (error) {
+          console.warn("Fullscreen not available:", error);
+        }
+      });
+
+      document.addEventListener("fullscreenchange", () => {
+        setDisplayMode();
+        resize();
+      });
+
+      const applyToolOutput = (toolOutput) => {
+        const difficulty = toolOutput?.difficulty;
+        if (difficulty && difficultyPresets[difficulty]) {
+          applyDifficulty(difficulty);
+        }
+        cacheAnalysisPayload(toolOutput);
+        const analysisPayload = getAnalysisPayload(toolOutput);
+        if (analysisPayload) {
+          renderCoachAnalysis(analysisPayload);
+          broadcastAnalysisIfHost(analysisPayload, toolOutput);
+        }
+      };
+
+      if (window.openai?.toolOutput) {
+        applyToolOutput(window.openai.toolOutput);
+      }
+      if (window.openai?.displayMode) {
+        setDisplayMode(window.openai.displayMode);
+      }
+
+      let multiplayerInitialized = false;
+      const maybeInitMultiplayer = async () => {
+        if (multiplayerInitialized) return;
+        const ready = await initMultiplayer();
+        multiplayerInitialized = ready;
+      };
+
+      const retryMultiplayerInit = () => {
+        let attempts = 0;
+        const timer = setInterval(async () => {
+          if (multiplayerInitialized) {
+            clearInterval(timer);
+            return;
+          }
+          attempts += 1;
+          const config = getMultiplayerConfig();
+          if (config.publicKey || config.authUrl) {
+            await maybeInitMultiplayer();
+          }
+          if (attempts >= 10) {
+            clearInterval(timer);
+          }
+        }, 300);
+      };
+
+      window.addEventListener("openai:set_globals", (event) => {
+        const globals = event.detail?.globals;
+        if (globals?.toolOutput) {
+          applyToolOutput(globals.toolOutput);
+        }
+        if (globals?.displayMode) {
+          setDisplayMode(globals.displayMode);
+        }
+        if (globals?.toolResponseMetadata && !multiplayerInitialized) {
+          maybeInitMultiplayer();
+        }
+      });
+
+      resize();
+      resetMatch({ force: true });
+      await maybeInitMultiplayer();
+      retryMultiplayerInit();
+      syncFullscreenButton();
+      requestAnimationFrame(loop);
+    </script>
+  </body>
+</html>
